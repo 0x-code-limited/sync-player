@@ -1,5 +1,6 @@
 import React from "react";
 import ThemeToggle from "@/components/ThemeToggle";
+import AuthButton from "@/components/AuthButton";
 import Link from "next/link";
 
 const Header = () => {
@@ -23,9 +24,7 @@ const Header = () => {
           >
             Go to Room
           </Link>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
-            Log in
-          </button>
+          <AuthButton />
           <ThemeToggle />
         </div>
       </div>

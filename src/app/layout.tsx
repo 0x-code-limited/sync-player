@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import SessionProvider from "@/components/SessionProvider";
 import Header from "@/sections/home/Header";
 import Footer from "@/sections/home/Footer";
 
@@ -28,13 +29,15 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} font-sans antialiased bg-white dark:bg-gray-900 transition-colors`}
       >
-        <ThemeProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
