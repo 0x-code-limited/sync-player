@@ -8,6 +8,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  session: {
+    strategy: "jwt", // Force JWT tokens instead of database sessions
+  },
   pages: {
     signIn: "/auth/signin",
   },
@@ -15,12 +18,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
       // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url;
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
       return baseUrl;
     },
-    async session({ session }) {
+    async session({ session, token }) {
+      // Add JWT token to session for debugging
+      session.accessToken = JSON.stringify(token);
       return session;
     },
     async jwt({ token }) {
