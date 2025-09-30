@@ -1,20 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useCreateRoom } from "@/hooks/useRoom";
 
 const Form = () => {
+  const { data: session } = useSession();
   const [roomName, setRoomName] = useState("");
+  const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
+  const { mutate: createRoom } = useCreateRoom();
+  useEffect(() => {
+    if (session?.user?.name) {
+      setName(session.user.name);
+    }
+  }, [session]);
+
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!roomName.trim()) return;
+    if (!roomName.trim() || !name.trim()) {
+      return;
+    }
 
     setIsCreating(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     console.log("Creating room:", { name: roomName, isPrivate });
+
+    createRoom({
+      name: roomName,
+      isPublic: !isPrivate,
+      settings: {
+        allowGuests: true,
+        requireApproval: false,
+        autoStart: true,
+      },
+    });
+
     // Reset form
     setRoomName("");
     setIsPrivate(false);
@@ -30,10 +52,27 @@ const Form = () => {
       <form onSubmit={handleCreateRoom} className="space-y-6">
         <div>
           <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            Display Name *
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter display name..."
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+            required
+          />
+        </div>
+        <div>
+          <label
             htmlFor="roomName"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >
-            Room Name
+            Room Name *
           </label>
           <input
             type="text"

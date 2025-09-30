@@ -1,6 +1,6 @@
 import React from "react";
-import Form from "@/sections/room/Form";
-import List from "@/sections/room/List";
+import Form from "@/components/sections/room/Form";
+import List from "@/components/sections/room/List";
 
 const RoomPage = () => {
   return (

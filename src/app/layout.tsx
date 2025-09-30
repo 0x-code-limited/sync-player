@@ -3,8 +3,9 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import SessionProvider from "@/components/SessionProvider";
-import Header from "@/sections/home/Header";
-import Footer from "@/sections/home/Footer";
+import QueryProvider from "@/components/QueryProvider";
+import Header from "@/components/sections/home/Header";
+import Footer from "@/components/sections/home/Footer";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -30,13 +31,15 @@ export default function RootLayout({
         className={`${poppins.variable} font-sans antialiased bg-white dark:bg-gray-900 transition-colors`}
       >
         <SessionProvider>
-          <ThemeProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-          </ThemeProvider>
+          <QueryProvider>
+            <ThemeProvider>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </ThemeProvider>
+          </QueryProvider>
         </SessionProvider>
       </body>
     </html>

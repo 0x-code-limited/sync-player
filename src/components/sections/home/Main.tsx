@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Main = () => {
@@ -15,9 +16,12 @@ const Main = () => {
             Create rooms, share videos, and enjoy synchronized playback in
             real-time.
           </p>
-          <button className="px-8 py-4 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+          <Link
+            href="/room"
+            className="px-8 py-4 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
             Get Started Free
-          </button>
+          </Link>
         </div>
       </section>
 
