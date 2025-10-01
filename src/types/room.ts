@@ -1,13 +1,15 @@
+import { ObjectId } from "mongodb";
+
 export interface Room {
-  _id: string;
+  _id: ObjectId;
   name: string;
   description?: string;
   ownerId: string;
   isPublic: boolean;
   maxParticipants?: number;
   currentParticipants: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   settings?: {
     allowGuests: boolean;
     requireApproval: boolean;

@@ -1,8 +1,11 @@
 import React from "react";
 import Form from "@/components/sections/room/Form";
 import List from "@/components/sections/room/List";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 
-const RoomPage = () => {
+const RoomPage = async () => {
   return (
     <>
       {/* Hero Section */}

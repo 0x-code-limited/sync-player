@@ -28,9 +28,11 @@ export default function AuthButton() {
               height={32}
             />
           )}
-          <span className="text-sm text-gray-700 dark:text-gray-300 hidden sm:inline">
-            {session.user?.name}
-          </span>
+          <Link href="/profile">
+            <span className="text-sm text-gray-700 dark:text-gray-300 hidden sm:inline">
+              {session.user?.name}
+            </span>
+          </Link>
         </div>
         <button
           onClick={() => signOut()}
