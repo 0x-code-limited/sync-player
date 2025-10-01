@@ -6,8 +6,8 @@ import { ObjectId } from "mongodb";
 
 // POST /api/rooms/[id]/join - Join a room
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
     const userId = (session.user as { id?: string })?.id;
 
     if (!userId) {

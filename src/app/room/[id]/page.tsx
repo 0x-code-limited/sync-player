@@ -3,9 +3,7 @@ import { useRoom } from "@/hooks/useRoom";
 import { useParams } from "next/navigation";
 import React from "react";
 
-type Props = {};
-
-const RoomPage = (props: Props) => {
+const RoomPage = () => {
   const { id } = useParams();
   const { data: room } = useRoom(id as string);
   return (

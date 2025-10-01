@@ -80,7 +80,10 @@ export const useUpdateRoom = () => {
       roomApi.updateRoom(id, data),
     onSuccess: (updatedRoom) => {
       // Update the specific room in cache
-      queryClient.setQueryData(roomKeys.detail(updatedRoom._id), updatedRoom);
+      queryClient.setQueryData(
+        roomKeys.detail(updatedRoom._id.toString()),
+        updatedRoom
+      );
 
       // Invalidate room lists to refetch
       queryClient.invalidateQueries({ queryKey: roomKeys.lists() });
@@ -119,7 +122,7 @@ export const useDeleteRoom = () => {
         queryClient.setQueryData(
           roomKeys.userRooms(userId),
           (old: Room[] | undefined) =>
-            old ? old.filter((room) => room._id !== deletedId) : old
+            old ? old.filter((room) => room._id.toString() !== deletedId) : old
         );
       }
     },
@@ -136,7 +139,10 @@ export const useJoinRoom = () => {
     mutationFn: (id: string) => roomApi.joinRoom(id),
     onSuccess: (updatedRoom) => {
       // Update the room in cache
-      queryClient.setQueryData(roomKeys.detail(updatedRoom._id), updatedRoom);
+      queryClient.setQueryData(
+        roomKeys.detail(updatedRoom._id.toString()),
+        updatedRoom
+      );
 
       // Invalidate room lists to show updated participant count
       queryClient.invalidateQueries({ queryKey: roomKeys.lists() });

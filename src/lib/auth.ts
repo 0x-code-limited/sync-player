@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
       }
       return baseUrl;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       try {
         if (account?.provider === "google" && user.email) {
           const usersCollection = await getUsersCollection();

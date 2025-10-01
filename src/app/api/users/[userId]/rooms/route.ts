@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { Room } from "@/types/room";
 import { getRoomsCollection } from "@/lib/mongodb";
 
 // GET /api/users/[userId]/rooms - Get user's rooms (owned and participated)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const requestedUserId = params.userId;
+    const { userId: requestedUserId } = await params;
     const currentUserId = (session.user as { id?: string })?.id;
 
     // Users can only view their own rooms unless they have admin privileges

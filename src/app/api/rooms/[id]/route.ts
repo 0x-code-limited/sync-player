@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb";
 // GET /api/rooms/[id] - Get a single room by ID
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
 
     // Validate ObjectId format
     if (!ObjectId.isValid(roomId)) {
@@ -59,7 +59,7 @@ export async function GET(
 // PUT /api/rooms/[id] - Update an existing room
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -67,7 +67,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
     const body: UpdateRoomData = await request.json();
 
     // Validate ObjectId format
@@ -106,7 +106,18 @@ export async function PUT(
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Partial<{
+      name: string;
+      description?: string;
+      isPublic: boolean;
+      maxParticipants: number;
+      updatedAt: Date;
+      settings: {
+        allowGuests: boolean;
+        requireApproval: boolean;
+        autoStart: boolean;
+      };
+    }> = {
       updatedAt: new Date(),
     };
 
@@ -165,7 +176,7 @@ export async function PUT(
 // DELETE /api/rooms/[id] - Delete a room
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -173,7 +184,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const roomId = params.id;
+    const { id: roomId } = await params;
 
     // Validate ObjectId format
     if (!ObjectId.isValid(roomId)) {
