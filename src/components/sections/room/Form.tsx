@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import { useCreateRoom } from "@/hooks/useRoom";
 import LoadingButton from "@/components/LoadingButton";
 import Link from "next/link";
 
 const Form = () => {
   const { data: session } = useSession();
+  const { user } = useUser();
   const [roomName, setRoomName] = useState("");
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -14,10 +16,13 @@ const Form = () => {
 
   const { mutate: createRoom } = useCreateRoom();
   useEffect(() => {
-    if (session?.user?.name) {
+    // Check if user.profile.displayName exists, otherwise use session.user.name
+    if (user?.profile?.displayName) {
+      setName(user.profile.displayName);
+    } else if (session?.user?.name) {
       setName(session.user.name);
     }
-  }, [session]);
+  }, [user, session]);
 
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
