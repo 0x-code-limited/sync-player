@@ -14,9 +14,7 @@ const List = () => {
   const router = useRouter();
 
   const handleJoinRoom = (roomId: string) => {
-    console.log("Joining room:", roomId);
     router.push(`/room/${roomId}`);
-    // Navigate to room or show room interface
   };
 
   const handleDeleteRoom = async (roomId: string) => {

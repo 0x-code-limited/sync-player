@@ -34,6 +34,14 @@ export async function POST(
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
+    // Check if currentParticipants is greater than 0 before decrementing
+    if (room.currentParticipants <= 0) {
+      return NextResponse.json({
+        message: "No participants to remove",
+        currentParticipants: room.currentParticipants,
+      });
+    }
+
     // For now, we'll just decrement the participant count
     // In a real app, you might want to track individual participants
     const result = await roomsCollection.updateOne(

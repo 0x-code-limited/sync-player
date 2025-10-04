@@ -1,7 +1,12 @@
 "use client";
-import { useRoom, useUpdateRoom } from "@/hooks/useRoom";
-import { useParams } from "next/navigation";
-import React, { useState } from "react";
+import {
+  useRoom,
+  useUpdateRoom,
+  useLeaveRoom,
+  useJoinRoom,
+} from "@/hooks/useRoom";
+import { useParams, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import SettingModal from "./components/SettingModal";
 import Details from "./components/Details";
@@ -10,7 +15,55 @@ const RoomPage = () => {
   const { id } = useParams();
   const { data: room } = useRoom(id as string);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
   const { mutate: updateRoom } = useUpdateRoom();
+  const { mutate: leaveRoom } = useLeaveRoom();
+  const { mutate: joinRoom } = useJoinRoom();
+  const router = useRouter();
+  // Handle joining room when component mounts
+  useEffect(() => {
+    if (id && !hasJoined && !isJoining) {
+      console.log("Joining room:", id);
+      setIsJoining(true);
+      try {
+        joinRoom(id as string);
+        setHasJoined(true);
+      } catch (error) {
+        console.error("Failed to join room:", error);
+      } finally {
+        setIsJoining(false);
+      }
+    }
+  }, [id, hasJoined, isJoining, joinRoom]);
+
+  // Handle leaving room when component unmounts or page is refreshed/closed
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Use sendBeacon for reliable API call when page is closing
+      if (id && typeof navigator !== "undefined" && navigator.sendBeacon) {
+        try {
+          // sendBeacon doesn't support custom headers, so we'll rely on session-based auth
+          navigator.sendBeacon(`/api/rooms/${id}/leave`, "");
+        } catch (error) {
+          console.error("Failed to leave room on page unload:", error);
+        }
+      }
+    };
+
+    // Add beforeunload listener for page refresh/close
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      // Remove the event listener
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
+      // Call leave room API when component unmounts (navigation)
+      if (id) {
+        leaveRoom(id as string);
+      }
+    };
+  }, [id, leaveRoom]);
 
   const handleSettingsClick = () => {
     setIsSettingsModalOpen(true);
@@ -30,6 +83,13 @@ const RoomPage = () => {
     console.log("Saving room settings:", data);
     // This would typically make an API call to update the room
     await updateRoom({ id: id as string, data });
+  };
+
+  const handleLeaveRoom = () => {
+    if (id) {
+      leaveRoom(id as string);
+      router.push("/");
+    }
   };
 
   return (
@@ -61,10 +121,22 @@ const RoomPage = () => {
               ) : (
                 <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">
                   <div className="text-center">
-                    <p className="text-lg mb-2">No video URL provided</p>
-                    <p className="text-sm text-gray-400">
-                      Add a video URL in room settings
-                    </p>
+                    {isJoining ? (
+                      <>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                        <p className="text-lg mb-2">Joining room...</p>
+                        <p className="text-sm text-gray-400">
+                          Please wait while we connect you
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-lg mb-2">No video URL provided</p>
+                        <p className="text-sm text-gray-400">
+                          Add a video URL in room settings
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -77,6 +149,7 @@ const RoomPage = () => {
           <Header
             roomName={room?.name || ""}
             onSettingsClick={handleSettingsClick}
+            onLeaveClick={handleLeaveRoom}
           />
           <Details roomId={id as string} />
         </div>

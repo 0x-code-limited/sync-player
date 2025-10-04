@@ -5,6 +5,7 @@ interface Props {
   roomId: string;
 }
 const Details = (props: Props) => {
+  console.log("🚀 ~ Details ~ props:", props);
   const mockParticipants = [
     {
       name: "John Doe",

@@ -11,11 +11,6 @@ export interface Room {
   createdAt: Date;
   updatedAt: Date;
   videoUrl?: string;
-  settings?: {
-    allowGuests: boolean;
-    requireApproval: boolean;
-    autoStart: boolean;
-  };
 }
 
 export interface CreateRoomData {
