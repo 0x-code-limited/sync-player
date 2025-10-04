@@ -10,11 +10,7 @@ export interface Room {
   currentParticipants: number;
   createdAt: Date;
   updatedAt: Date;
-  settings?: {
-    allowGuests: boolean;
-    requireApproval: boolean;
-    autoStart: boolean;
-  };
+  videoUrl?: string;
 }
 
 export interface CreateRoomData {
@@ -22,6 +18,7 @@ export interface CreateRoomData {
   description?: string;
   isPublic?: boolean;
   maxParticipants?: number;
+  videoUrl?: string;
   settings?: {
     allowGuests?: boolean;
     requireApproval?: boolean;
@@ -34,6 +31,7 @@ export interface UpdateRoomData {
   description?: string;
   isPublic?: boolean;
   maxParticipants?: number;
+  videoUrl?: string;
   settings?: {
     allowGuests?: boolean;
     requireApproval?: boolean;

@@ -112,6 +112,7 @@ export async function PUT(
       isPublic: boolean;
       maxParticipants: number;
       updatedAt: Date;
+      videoUrl?: string;
       settings: {
         allowGuests: boolean;
         requireApproval: boolean;
@@ -121,13 +122,21 @@ export async function PUT(
       updatedAt: new Date(),
     };
 
-    if (body.name !== undefined) updateData.name = body.name.trim();
-    if (body.description !== undefined)
+    if (body.name !== undefined) {
+      updateData.name = body.name.trim();
+    }
+    if (body.description !== undefined) {
       updateData.description = body.description?.trim();
-    if (body.isPublic !== undefined) updateData.isPublic = body.isPublic;
-    if (body.maxParticipants !== undefined)
+    }
+    if (body.isPublic !== undefined) {
+      updateData.isPublic = body.isPublic;
+    }
+    if (body.maxParticipants !== undefined) {
       updateData.maxParticipants = body.maxParticipants;
-
+    }
+    if (body.videoUrl !== undefined) {
+      updateData.videoUrl = body.videoUrl;
+    }
     if (body.settings !== undefined) {
       updateData.settings = {
         allowGuests:

@@ -14,9 +14,7 @@ const List = () => {
   const router = useRouter();
 
   const handleJoinRoom = (roomId: string) => {
-    console.log("Joining room:", roomId);
     router.push(`/room/${roomId}`);
-    // Navigate to room or show room interface
   };
 
   const handleDeleteRoom = async (roomId: string) => {
@@ -51,7 +49,7 @@ const List = () => {
               >
                 <div className="flex-1">
                   <h4 className="font-semibold text-gray-900 dark:text-white">
-                    {room.name} -{" "}
+                    {room.name}
                   </h4>
 
                   <p className="text-sm text-gray-600 dark:text-gray-300">

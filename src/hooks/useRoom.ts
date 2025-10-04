@@ -76,8 +76,9 @@ export const useUpdateRoom = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRoomData }) =>
-      roomApi.updateRoom(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateRoomData }) => {
+      return roomApi.updateRoom(id, data);
+    },
     onSuccess: (updatedRoom) => {
       // Update the specific room in cache
       queryClient.setQueryData(
