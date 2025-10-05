@@ -13,7 +13,7 @@ const LeftSection = (props: Props) => {
   // Show loading skeleton while room data is loading
   if (isLoading) {
     return (
-      <section className="w-full lg:w-[70%] bg-black flex items-center justify-center">
+      <section className="w-full lg:w-[80%] bg-black flex items-center justify-center">
         <div className="w-full h-full max-h-[60vh] lg:max-h-full flex items-center justify-center">
           <VideoPlayerSkeleton />
         </div>
@@ -22,7 +22,7 @@ const LeftSection = (props: Props) => {
   }
 
   return (
-    <section className="w-full lg:w-[70%] bg-black flex items-center justify-center">
+    <section className="w-full lg:w-[80%] bg-black flex items-center justify-center">
       <div className="w-full h-full max-h-[60vh] lg:max-h-full flex items-center justify-center">
         {/* Video Player */}
         <div className="w-full h-full flex items-center justify-center">
