@@ -58,7 +58,6 @@ export const authOptions: NextAuthOptions = {
             };
 
             await usersCollection.insertOne(newUser);
-            console.log("New user created in MongoDB:", user.email);
           } else {
             // Update last login time
             await usersCollection.updateOne(
@@ -70,7 +69,6 @@ export const authOptions: NextAuthOptions = {
                 },
               }
             );
-            console.log("User login updated in MongoDB:", user.email);
           }
         }
         return true;

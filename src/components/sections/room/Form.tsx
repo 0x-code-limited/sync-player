@@ -32,8 +32,6 @@ const Form = () => {
 
     setIsCreating(true);
 
-    console.log("Creating room:", { name: roomName, isPrivate });
-
     createRoom({
       name: roomName,
       isPublic: !isPrivate,

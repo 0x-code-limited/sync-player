@@ -23,7 +23,6 @@ export default function DebugPage() {
         .then((res) => res.json())
         .then((data) => {
           setTokenData(data);
-          console.log("Token data:", data);
         })
         .catch((error) => {
           console.error("Failed to fetch token:", error);

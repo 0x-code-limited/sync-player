@@ -42,7 +42,6 @@ export function useUser() {
         throw new Error("Failed to fetch user data");
       }
       const resp = await response.json();
-      console.log("🚀 ~ useUser ~ resp:", resp);
       return resp;
     },
     enabled: isAuthenticated,
@@ -67,7 +66,6 @@ export function useUser() {
     },
     onSuccess: () => {
       // Invalidate and refetch user data
-      console.log("Profile updated successfully");
       queryClient.invalidateQueries({ queryKey: ["user", "me"] });
     },
   });

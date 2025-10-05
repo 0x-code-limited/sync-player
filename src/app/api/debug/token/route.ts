@@ -20,14 +20,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "No token found" }, { status: 401 });
     }
 
-    console.log("Raw token:", rawToken);
-    console.log("Raw token type:", typeof rawToken);
-    console.log("Token starts with:", rawToken?.substring(0, 50));
-    console.log("Token length:", rawToken?.length);
-
     const tokenParts = typeof rawToken === "string" ? rawToken.split(".") : [];
-    console.log("Token parts count:", tokenParts.length);
-    console.log("First part:", tokenParts[0]?.substring(0, 20));
 
     return NextResponse.json({
       rawToken,

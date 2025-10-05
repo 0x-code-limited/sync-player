@@ -1,30 +1,22 @@
 "use client";
-import {
-  useRoom,
-  useUpdateRoom,
-  useLeaveRoom,
-  useJoinRoom,
-} from "@/hooks/useRoom";
-import { useParams, useRouter } from "next/navigation";
+import { useLeaveRoom, useJoinRoom, useRoom } from "@/hooks/useRoom";
+import { useParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import Header from "./components/Header";
-import SettingModal from "./components/SettingModal";
-import Details from "./components/Details";
+import RightSection from "./components/RightSection";
+import LeftSection from "./components/LeftSection";
+import { RoomSkeleton } from "@/components/LoadingSkeleton";
 
 const RoomPage = () => {
   const { id } = useParams();
-  const { data: room } = useRoom(id as string);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  const { mutate: updateRoom } = useUpdateRoom();
+
   const { mutate: leaveRoom } = useLeaveRoom();
   const { mutate: joinRoom } = useJoinRoom();
-  const router = useRouter();
+  const { isLoading: isRoomLoading } = useRoom(id as string);
   // Handle joining room when component mounts
   useEffect(() => {
     if (id && !hasJoined && !isJoining) {
-      console.log("Joining room:", id);
       setIsJoining(true);
       try {
         joinRoom(id as string);
@@ -65,103 +57,23 @@ const RoomPage = () => {
     };
   }, [id, leaveRoom]);
 
-  const handleSettingsClick = () => {
-    setIsSettingsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsSettingsModalOpen(false);
-  };
-
-  const handleSaveSettings = async (data: {
-    name: string;
-    description: string;
-    isPublic: boolean;
-    videoUrl: string;
-  }) => {
-    // TODO: Implement API call to update room settings
-    console.log("Saving room settings:", data);
-    // This would typically make an API call to update the room
-    await updateRoom({ id: id as string, data });
-  };
-
-  const handleLeaveRoom = () => {
-    if (id) {
-      leaveRoom(id as string);
-      router.push("/");
-    }
-  };
+  // Show full page skeleton while room data is loading
+  if (isRoomLoading) {
+    return <RoomSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Main Content - Responsive Layout */}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-73px)]">
         {/* Video Player Section - 70% width on desktop, full width on mobile */}
-        <div className="w-full lg:w-[70%] bg-black flex items-center justify-center">
-          <div className="w-full h-full max-h-[60vh] lg:max-h-full flex items-center justify-center">
-            {/* Video Player */}
-            <div className="w-full h-full flex items-center justify-center">
-              {room?.videoUrl ? (
-                <video
-                  src={room.videoUrl}
-                  controls
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    console.error("Video failed to load:", e);
-                  }}
-                  onLoadStart={() => {
-                    console.log("Video started loading");
-                  }}
-                  onCanPlay={() => {
-                    console.log("Video can start playing");
-                  }}
-                >
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">
-                  <div className="text-center">
-                    {isJoining ? (
-                      <>
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                        <p className="text-lg mb-2">Joining room...</p>
-                        <p className="text-sm text-gray-400">
-                          Please wait while we connect you
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-lg mb-2">No video URL provided</p>
-                        <p className="text-sm text-gray-400">
-                          Add a video URL in room settings
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <LeftSection roomId={id as string} isJoining={isJoining} />
 
         {/* Right Section - 30% width on desktop, full width on mobile */}
-        <div className="w-full lg:w-[30%] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700">
-          <Header
-            roomName={room?.name || ""}
-            onSettingsClick={handleSettingsClick}
-            onLeaveClick={handleLeaveRoom}
-          />
-          <Details roomId={id as string} />
-        </div>
+        <RightSection roomId={id as string} />
       </div>
 
       {/* Settings Modal */}
-      <SettingModal
-        isOpen={isSettingsModalOpen}
-        onClose={handleCloseModal}
-        room={room || null}
-        onSave={handleSaveSettings}
-      />
     </div>
   );
 };
