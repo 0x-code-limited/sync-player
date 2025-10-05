@@ -1,61 +1,17 @@
 "use client";
-import { useLeaveRoom, useJoinRoom, useRoom } from "@/hooks/useRoom";
+import { useRoom } from "@/hooks/useRoom";
 import { useParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import RightSection from "./components/RightSection";
 import LeftSection from "./components/LeftSection";
 import { RoomSkeleton } from "@/components/LoadingSkeleton";
+import { useRoomConcierge } from "@/hooks/useRoomConcierge";
 
 const RoomPage = () => {
   const { id } = useParams();
-  const [hasJoined, setHasJoined] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
+  const { isJoining } = useRoomConcierge(id as string);
 
-  const { mutate: leaveRoom } = useLeaveRoom();
-  const { mutate: joinRoom } = useJoinRoom();
   const { isLoading: isRoomLoading } = useRoom(id as string);
-  // Handle joining room when component mounts
-  useEffect(() => {
-    if (id && !hasJoined && !isJoining) {
-      setIsJoining(true);
-      try {
-        joinRoom(id as string);
-        setHasJoined(true);
-      } catch (error) {
-        console.error("Failed to join room:", error);
-      } finally {
-        setIsJoining(false);
-      }
-    }
-  }, [id, hasJoined, isJoining, joinRoom]);
-
-  // Handle leaving room when component unmounts or page is refreshed/closed
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      // Use sendBeacon for reliable API call when page is closing
-      if (id && typeof navigator !== "undefined" && navigator.sendBeacon) {
-        try {
-          // sendBeacon doesn't support custom headers, so we'll rely on session-based auth
-          navigator.sendBeacon(`/api/rooms/${id}/leave`, "");
-        } catch (error) {
-          console.error("Failed to leave room on page unload:", error);
-        }
-      }
-    };
-
-    // Add beforeunload listener for page refresh/close
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      // Remove the event listener
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-
-      // Call leave room API when component unmounts (navigation)
-      if (id) {
-        leaveRoom(id as string);
-      }
-    };
-  }, [id, leaveRoom]);
 
   // Show full page skeleton while room data is loading
   if (isRoomLoading) {
